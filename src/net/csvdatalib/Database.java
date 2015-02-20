@@ -20,12 +20,8 @@ public class Database
      */
     public Database() throws DatabaseException{
         String path = System.getProperty("user.dir").replace('\\', '/') + "/database.csv";
-        try{
-            FileOperationHelper.getFile(path, false, EnumFilePermissions.READ_WRITE);
-            this.path = path;
-        }catch(DatabaseIOException e){
-            throw new DatabaseException("Database initialization failed: " + e.getMessage());
-        }
+        FileOperationHelper.getFile(path, false, EnumFilePermissions.READ_WRITE);
+        this.path = path;
     }
 
     /**
@@ -34,11 +30,7 @@ public class Database
      * @throws DatabaseException throws exception when anything goes wrong
      */
     public Database(String path) throws DatabaseException{
-        try{
-            this.file = FileOperationHelper.getFile(path, false, EnumFilePermissions.READ_WRITE);
-            this.path = file.getAbsolutePath();
-        }catch(DatabaseIOException e){
-            throw new DatabaseException("Database initialization failed: " + e.getMessage());
-        }
+        this.file = FileOperationHelper.getFile(path, false, EnumFilePermissions.READ_WRITE);
+        this.path = file.getAbsolutePath();
     }
 }
