@@ -1,6 +1,7 @@
 package net.csvdatalib.internal;
 
 
+import net.csvdatalib.*;
 import net.csvdatalib.internal.exceptions.*;
 
 import java.util.*;
@@ -133,5 +134,33 @@ public class DatabaseFile{
      */
     public void setInteger(int value, String collum) throws DatabaseException{
         this.setInteger(value, collum, this.rows.length);
+    }
+
+    /**
+     * Saves the database to file
+     * @param database the current database instance
+     * @throws DatabaseIOException throws a DatabaseIOException when the file couldn't be saved
+     */
+    public void save(Database database) throws DatabaseIOException{
+        String[] lines = new String[this.rows.length];
+        lines[0] = "";
+        for(int i = 0; i < this.collums.length; i++){
+            if(i != this.collums.length-1){
+                lines[0] += this.collums[i] + ",";
+            }else{
+                lines[0] += this.collums[i];
+            }
+        }
+        for(int b = 0; b < this.rows.length; b++){
+            String[] row = rows[b];
+            for(int a = 0; a < this.rows.length; a++){
+                if(a != this.rows.length-1){
+                    lines[b + 1] += row[a] + ",";
+                }else{
+                    lines[b + 1] += row[a];
+                }
+            }
+        }
+        FileOperationHelper.writeToFile(database.file, lines);
     }
 }

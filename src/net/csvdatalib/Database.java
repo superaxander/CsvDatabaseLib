@@ -12,7 +12,7 @@ import java.io.*;
 public class Database
 {
     private String path;
-    private File file;
+    public File file;
 
     /**
      * Create a new Database object and load in file information(will create a database.csv file in the working directory)
