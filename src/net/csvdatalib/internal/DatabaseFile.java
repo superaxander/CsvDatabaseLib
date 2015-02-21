@@ -196,6 +196,42 @@ public class DatabaseFile{
     }
 
     /**
+     * Gets the boolean in the specified row
+     * @param collum the collum to get the value from
+     * @param row the row to get the value from
+     * @return the value of the collum in row
+     * @throws DatabaseException throws a DatabaseException when the found value wasn't a valid boolean or when findCollum throws a DatabaseException
+     */
+    public boolean getBoolean(String collum, int row) throws DatabaseException{
+        try{
+            return Boolean.getBoolean(this.rows[row][this.findCollum(collum)]);
+        }catch (NumberFormatException nfe){
+            throw new DatabaseException("Value in specified collum and row(Collum: "+collum+" Row: "+String.valueOf(row)+") wasn't a valid boolean");
+        }
+    }
+
+    /**
+     * Sets the boolean in the specified collum and row
+     * @param value the value to be set
+     * @param collum in which collum to put the value
+     * @param row in which row to put the value
+     * @throws DatabaseException throws a DatabaseException when findCollum throws a DatabaseException
+     */
+    public void setBoolean(boolean value, String collum, int row) throws DatabaseException{
+        this.setString(String.valueOf(value), collum, row);
+    }
+
+    /**
+     * Sets the boolean in the specified collum in a new row
+     * @param value the value to be set
+     * @param collum in which collum to put the value
+     * @throws DatabaseException throws a DatabaseException when findCollum throws a DatabaseException
+     */
+    public void setBoolean(boolean value, String collum) throws DatabaseException{
+        this.setBoolean(value, collum, this.rows.length);
+    }
+
+    /**
      * Gets the rows and collums and turns them into lines(for writing to a file)
      * @return the rows and collums in a string array.
      */
