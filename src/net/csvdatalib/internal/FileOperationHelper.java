@@ -52,7 +52,7 @@ public class FileOperationHelper
             fileWriter.flush();
             fileWriter.close();
         }catch (IOException e){
-            throw new DatabaseIOException(e.getCause().toString());
+            throw new DatabaseIOException("FileIOFailed");
         }
     }
 
@@ -72,7 +72,22 @@ public class FileOperationHelper
             fileWriter.close();
 
         }catch(IOException e){
-            throw new DatabaseIOException(e.getCause().toString());
+            throw new DatabaseIOException("File IO Failed");
+        }
+    }
+
+    /**
+     * Load the specified file's lines
+     * @param file the file to load
+     * @return the lines that were found in the file
+     * @throws DatabaseIOException throws a DatabaseIOException when the file couldn't be read
+     */
+    public static String[] loadFile(File file) throws DatabaseIOException{
+        try{
+            BufferedReader fileReader = new BufferedReader(new FileReader(file));
+            return (String[])fileReader.lines().toArray();
+        }catch (IOException e){
+            throw new DatabaseIOException("Couldn't read file");
         }
     }
 }

@@ -11,17 +11,16 @@ import java.io.*;
  */
 public class Database
 {
-    private String path;
+    public String path;
     public File file;
+    public DatabaseFile databaseFile;
 
     /**
      * Create a new Database object and load in file information(will create a database.csv file in the working directory)
      * @throws DatabaseException throws exception when anything goes wrong
      */
     public Database() throws DatabaseException{
-        String path = System.getProperty("user.dir").replace('\\', '/') + "/database.csv";
-        FileOperationHelper.getFile(path, false, EnumFilePermissions.READ_WRITE);
-        this.path = path;
+        this(System.getProperty("user.dir").replace('\\', '/') + "/database.csv");
     }
 
     /**
@@ -30,7 +29,13 @@ public class Database
      * @throws DatabaseException throws exception when anything goes wrong
      */
     public Database(String path) throws DatabaseException{
-        this.file = FileOperationHelper.getFile(path, false, EnumFilePermissions.READ_WRITE);
+        FileOperationHelper.getFile(path, false, EnumFilePermissions.READ_WRITE);
+        if(file.exists()){
+            databaseFile = new DatabaseFile(FileOperationHelper.loadFile(file));
+        }else{
+            databaseFile = new DatabaseFile(new String[]{"collum1,collum2", "row1col1, row1col2"});
+        }
+        this.path = path;
         this.path = file.getAbsolutePath();
     }
 }

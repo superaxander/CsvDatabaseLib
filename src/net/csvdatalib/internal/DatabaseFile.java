@@ -32,6 +32,27 @@ public class DatabaseFile{
     }
 
     /**
+     * Remove all instances of a duplicate collum
+     */
+    public void removeDuplicateCollums(){
+        for(int i = 0; i < this.collums.length; i++){
+            try{
+                this.findCollum(this.collums[i]);
+            }catch(DatabaseException e){
+                if(e.getMessage() == "CSVDATALIB:Duplicate collums"){
+                    List<String> list = new ArrayList<String>(Arrays.asList(this.collums));
+                    list.removeAll(Arrays.asList(this.collums[i]));
+                    this.collums = list.toArray(new String[list.size()]);
+                    for(int b = 0; b < this.rows.length; b++){
+                        List<String> list2 = new ArrayList<String>(Arrays.asList(this.rows[i]));
+                        list2.remove(i);
+                        this.rows[i] = list2.toArray(new String[list2.size()]);
+                    }
+                }
+            }
+        }
+    }
+    /**
      * Finds specified collum in database
      * @param collum the collum to be searched for
      * @return the number of the collum(returns -1 when the collum wasn't found)
@@ -68,6 +89,44 @@ public class DatabaseFile{
         return this.rows[collumNumber][row];
     }
 
+    /**
+     * Gets the list of current collums
+     * @return the collums in the current DatabaseFile
+     */
+    public String[] getCollums(){
+        return this.collums;
+    }
+
+    /**
+     * Adds a collum the database
+     * @param collumname the name to call the collum
+     * @throws DatabaseException throws a DatabaseException when the collum already existed or when duplicate collums already exist
+     */
+    public void addCollum(String collumname) throws DatabaseException{
+        try{
+            this.findCollum(collumname);
+            this.collums[this.collums.length] = collumname;
+        }catch (DatabaseException e){
+            throw new DatabaseException("Collum already exists");
+        }
+    }
+
+    /**
+     * Removes a collum from the database
+     * @param collumname the name of the collum that has to be removed
+     * @throws DatabaseException throws a DatabaseException when the collum did not exist or when a duplicate collum was found
+     */
+    public void removeCollum(String collumname) throws DatabaseException{
+        int collumnumber = this.findCollum(collumname);
+        List<String> list = new ArrayList<String>(Arrays.asList(this.collums));
+        list.removeAll(Arrays.asList(collumname));
+        this.collums = list.toArray(new String[list.size()]);
+        for(int i = 0; i < this.rows.length; i++){
+            List<String> list2 = new ArrayList<String>(Arrays.asList(this.rows[i]));
+            list2.remove(collumnumber);
+            this.rows[i] = list2.toArray(new String[list2.size()]);
+        }
+    }
     /**
      * Gets the string in the specified row
      * @param collum the collum to get the value from
@@ -137,11 +196,10 @@ public class DatabaseFile{
     }
 
     /**
-     * Saves the database to file
-     * @param database the current database instance
-     * @throws DatabaseIOException throws a DatabaseIOException when the file couldn't be saved
+     * Gets the rows and collums and turns them into lines(for writing to a file)
+     * @return the rows and collums in a string array.
      */
-    public void save(Database database) throws DatabaseIOException{
+    private String[] getLines(){
         String[] lines = new String[this.rows.length];
         lines[0] = "";
         for(int i = 0; i < this.collums.length; i++){
@@ -161,6 +219,26 @@ public class DatabaseFile{
                 }
             }
         }
-        FileOperationHelper.writeToFile(database.file, lines);
+        return lines;
+    }
+    /**
+     * Saves the database to file
+     * @param database the current database instance
+     * @throws DatabaseIOException throws a DatabaseIOException when the file couldn't be saved
+     */
+    public void save(Database database) throws DatabaseIOException{
+        FileOperationHelper.writeToFile(database.file, this.getLines());
+    }
+
+    /**
+     * Concatenates all the lines and returns them
+     * @return the concatenated lines
+     */
+    public String toString(){
+        String concatLines = "";
+        for(String line : this.getLines()){
+            concatLines += line + "\n";
+        }
+        return concatLines;
     }
 }
