@@ -24,8 +24,8 @@ public class DatabaseFile{
         this.collums = lines[0].split("([,])");
         for(int i=1; i < lines.length; i++){
             String[] b = lines[i].split("([,])");
-            for(int c=0; c < collums.length; c++){
-                rows[i - 1][c] = b[c];
+            for(int c=0; c < this.collums.length; c++){
+                this.rows[i - 1][c] = b[c];
             }
         }
     }
@@ -34,13 +34,13 @@ public class DatabaseFile{
      * Finds specified collum in database
      * @param collum the collum to be searched for
      * @return the number of the collum(returns -1 when the collum wasn't found)
-     * @throws DatabaseException throws a DatabaseException when there were multiple collums with the same name
+     * @throws DatabaseException throws a DatabaseException when there were multiple collums with the same name or when the specified collum couldn't be found
      */
     private int findCollum(String collum) throws DatabaseException{
         int collumNumber = -1;
         boolean cnSet = false;
-        for(int d=0; d < collums.length; d++){
-            if(collums[d].equals(collum)){
+        for(int d=0; d < this.collums.length; d++){
+            if(this.collums[d].equals(collum)){
                 if(cnSet){
                     throw new DatabaseException("Duplicate collums");
                 }else{
@@ -48,6 +48,9 @@ public class DatabaseFile{
                     cnSet = true;
                 }
             }
+        }
+        if(collumNumber < 0){
+            throw new DatabaseException("Specified collum wasn't found");
         }
         return collumNumber;
     }
@@ -57,15 +60,11 @@ public class DatabaseFile{
      * @param collum the collum to search for
      * @param row the row to search for
      * @return the value of the collum in the row
-     * @throws DatabaseException throws a DatabaseException when the specified collum couldn't be found
+     * @throws DatabaseException throws a DatabaseException when findCollum throws a DatabaseException
      */
     private String findCollumInRow(String collum, int row) throws DatabaseException{
-        int collumNumber = findCollum(collum);
-        if(collumNumber < 0){
-            return this.rows[collumNumber][row];
-        }else{
-            throw new DatabaseException("Specified Collum wasn't found");
-        }
+        int collumNumber = this.findCollum(collum);
+        return this.rows[collumNumber][row];
     }
 
     /**
@@ -73,17 +72,66 @@ public class DatabaseFile{
      * @param collum the collum to get the value from
      * @param row the row to get the value from
      * @return the value of the collum in the row
-     * @throws DatabaseException throws a DatabaseException when findCollumInRow throws a DatabaseException
+     * @throws DatabaseException throws a DatabaseException when findCollum throws a DatabaseException
      */
     public String getString(String collum, int row) throws DatabaseException{
-        return findCollumInRow(collum, row);
+        return this.findCollumInRow(collum, row);
     }
 
+    /**
+     * Sets the string in the specified collum and row
+     * @param value the value to be set
+     * @param collum in which collum to put the value
+     * @param row in which row to put the value
+     * @throws DatabaseException throws a DatabaseException when findCollum throws a DatabaseException
+     */
     public void setString(String value, String collum, int row) throws DatabaseException{
-        rows[row][findCollum(collum)] = value;
+        this.rows[row][this.findCollum(collum)] = value;
     }
 
+    /**
+     * Sets the string in the specified collum in a new row
+     * @param value the value to be set
+     * @param collum in which collum to put the value
+     * @throws DatabaseException throws a DatabaseException when findCollum throws a DatabaseException
+     */
     public void setString(String value, String collum) throws DatabaseException{
-        rows[rows.length][findCollum(collum)] = value;
+        this.setString(value, collum, this.rows.length);
+    }
+
+    /**
+     * Gets the integer in the specified row
+     * @param collum the collum to get the value from
+     * @param row the row to get the value from
+     * @return the value of the collum in row
+     * @throws DatabaseException throws a DatabaseException when the found value wasn't a valid integer or when findCollum throws a DatabaseException
+     */
+    public int getInteger(String collum, int row) throws DatabaseException{
+        try{
+            return Integer.valueOf(this.rows[row][this.findCollum(collum)]);
+        }catch (NumberFormatException nfe){
+            throw new DatabaseException("Value in specified collum and row(Collum: "+collum+" Row: "+String.valueOf(row)+") wasn't a valid integer");
+        }
+    }
+
+    /**
+     * Sets the integer in the specified collum and row
+     * @param value the value to be set
+     * @param collum in which collum to put the value
+     * @param row in which row to put the value
+     * @throws DatabaseException throws a DatabaseException when findCollum throws a DatabaseException
+     */
+    public void setInteger(int value, String collum, int row) throws DatabaseException{
+        this.setString(String.valueOf(value), collum, row);
+    }
+
+    /**
+     * Sets the integer in the specified collum in a new row
+     * @param value the value to be set
+     * @param collum in which collum to put the value
+     * @throws DatabaseException throws a DatabaseException when findCollum throws a DatabaseException
+     */
+    public void setInteger(int value, String collum) throws DatabaseException{
+        this.setInteger(value, collum, this.rows.length);
     }
 }
