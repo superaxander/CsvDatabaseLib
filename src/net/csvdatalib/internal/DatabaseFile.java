@@ -3,9 +3,7 @@ package net.csvdatalib.internal;
 
 import net.csvdatalib.*;
 import net.csvdatalib.internal.exceptions.*;
-
 import java.util.*;
-import java.util.stream.*;
 
 /**
  * Object holding the database after it is loaded from a file. Used to read/write to the database
@@ -199,15 +197,11 @@ public class DatabaseFile{
      * Gets the boolean in the specified row
      * @param collum the collum to get the value from
      * @param row the row to get the value from
-     * @return the value of the collum in row
-     * @throws DatabaseException throws a DatabaseException when the found value wasn't a valid boolean or when findCollum throws a DatabaseException
+     * @return the value of the collum in row(if no valid boolean was found will return false)
+     * @throws DatabaseException throws a DatabaseException when findCollum throws a DatabaseException
      */
     public boolean getBoolean(String collum, int row) throws DatabaseException{
-        try{
-            return Boolean.getBoolean(this.rows[row][this.findCollum(collum)]);
-        }catch (NumberFormatException nfe){
-            throw new DatabaseException("Value in specified collum and row(Collum: "+collum+" Row: "+String.valueOf(row)+") wasn't a valid boolean");
-        }
+        return Boolean.getBoolean(this.rows[row][this.findCollum(collum)]);
     }
 
     /**
@@ -231,6 +225,88 @@ public class DatabaseFile{
         this.setBoolean(value, collum, this.rows.length);
     }
 
+    public long getLong(String collum, int row) throws DatabaseException{
+        try{
+            return Long.getLong(this.getString(collum, row));
+        }catch (NumberFormatException nfe){
+            throw new DatabaseException("Value in specified collum and row(Collum: "+collum+" Row: "+String.valueOf(row)+") wasn't a valid long");
+        }
+    }
+
+    public void setLong(long value, String collum, int row) throws DatabaseException{
+        this.setString(String.valueOf(value), collum, row);
+    }
+
+    public void setLong(long value, String collum) throws DatabaseException{
+        this.setLong(value, collum, this.rows.length);
+    }
+
+    public double getDouble(String collum, int row) throws DatabaseException{
+        try{
+            return Double.valueOf(this.getString(collum, row));
+        }catch(NumberFormatException nfe){
+            throw new DatabaseException("Value in specified collum and row(Collum: "+collum+" Row: "+String.valueOf(row)+") wasn't a valid double");
+        }
+    }
+
+    public void setDouble(double value, String collum, int row) throws DatabaseException{
+        this.setString(String.valueOf(value), collum, row);
+    }
+
+    public void setDouble(double value, String collum) throws DatabaseException{
+        this.setDouble(value, collum, this.rows.length);
+    }
+
+    public float getFloat(String collum, int row) throws DatabaseException{
+        try{
+            return Float.valueOf(this.getString(collum, row));
+        }catch (NumberFormatException nfe){
+            throw new DatabaseException("Value in specified collum and row(Collum: "+collum+" Row: "+String.valueOf(row)+") wasn't a valid float");
+        }
+    }
+
+    public void setFloat(float value, String collum, int row) throws DatabaseException{
+        this.setString(String.valueOf(value), collum, row);
+    }
+
+    public void setFloat(float value, String collum) throws DatabaseException{
+        this.setFloat(value, collum, this.rows.length);
+    }
+
+    public char getChar(String collum, int row) throws DatabaseException{
+        return this.getString(collum, row).charAt(0);
+    }
+
+    public void setChar(char value, String collum, int row) throws DatabaseException{
+        this.setString(Character.toString(value), collum, row);
+    }
+
+    public void setChar(char value, String collum) throws DatabaseException{
+        this.setChar(value, collum, this.rows.length);
+    }
+
+    /**
+     * Gets the string array in the specified collum and row
+     * @param collum the collum to get the value from
+     * @param row the row to get the value from
+     * @return the value(array) of the collum in the row(Will return an array containing only the found string if the value wasn't a proper array)
+     * @throws DatabaseException throws a DatabaseException when findCollum throws a DatabaseException
+     */
+    public String[] getStringArray(String collum, int row) throws DatabaseException{
+        return this.getString(collum, row).split("\\|");
+    }
+
+    public void setStringArray(String[] value, String collum, int row) throws DatabaseException{
+        String setValue = "";
+        for(String val : value){
+            setValue += val + "|";
+        }
+        this.setString(setValue, collum, row);
+    }
+
+    public void setStringArray(String[] value, String collum) throws DatabaseException{
+        this.setStringArray(value, collum, this.rows.length);
+    }
     /**
      * Gets the rows and collums and turns them into lines(for writing to a file)
      * @return the rows and collums in a string array.
