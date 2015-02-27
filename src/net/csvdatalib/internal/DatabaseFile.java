@@ -402,7 +402,7 @@ public class DatabaseFile{
         this.setStringArray(value, collum, this.rows.length);
     }
     /**
-     * Gets the string array in the specified collum and row
+     * Gets the integer array in the specified collum and row
      * @param collum the collum to get the value from
      * @param row the row to get the value from
      * @return the value(array) of the collum in the row(Will return an array containing only the found integer if the value wasn't a proper array)
@@ -437,13 +437,58 @@ public class DatabaseFile{
     }
 
     /**
-     * Sets the string array in the specified collum in a new row
+     * Sets the integer array in the specified collum in a new row
      * @param value the value to be set
      * @param collum in which collum to put the value
      * @throws DatabaseException throws a DatabaseException when findCollum throws a DatabaseException
      */
     public void setIntegerArray(int[] value, String collum) throws DatabaseException{
         this.setIntegerArray(value, collum, this.rows.length);
+    }
+
+    /**
+     * Gets the long array in the specified collum and row
+     * @param collum the collum to get the value from
+     * @param row the row to get the value from
+     * @return the value(array) of the collum in the row(Will return an array containing only the found long if the value wasn't a proper array)
+     * @throws DatabaseException throws a DatabaseException when one of the found values wasn't a valid long when findCollum throws a DatabaseException
+     */
+    public long[] getLongArray(String collum, int row) throws DatabaseException{
+        String[] stringArray = this.getStringArray(collum, row);
+        long[] value = new long[stringArray.length-1];
+        for(int i = 0; i < stringArray.length; i++){
+            try{
+                value[i] = Long.getLong(stringArray[i]);
+            }catch(NumberFormatException nfe){
+                throw new DatabaseException("One ore more of the values in specified collum and row(Collum: "+collum+" Row: "+String.valueOf(row)+") were not valid longs");
+            }
+        }
+        return value;
+    }
+
+    /**
+     * Sets the long array in the specified collum and row
+     * @param value the value to be set
+     * @param collum in which collum to put the value
+     * @param row in which row to put the value
+     * @throws DatabaseException throws a DatabaseException when findCollum throws a DatabaseException
+     */
+    public void setLongArray(long[] value, String collum, int row) throws DatabaseException{
+        String[] stringArray = new String[value.length];
+        for(int i=0; i < value.length; i++){
+            stringArray[i] = String.valueOf(value[i]);
+        }
+        this.setStringArray(stringArray, collum, row);
+    }
+
+    /**
+     * Sets the long array in the specified collum in a new row
+     * @param value the value to be set
+     * @param collum in which collum to put the value
+     * @throws DatabaseException throws a DatabaseException when findCollum throws a DatabaseException
+     */
+    public void setLongArray(long[] value, String collum) throws DatabaseException{
+        this.setLongArray(value, collum, this.rows.length);
     }
 
     /**
