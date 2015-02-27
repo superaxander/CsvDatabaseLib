@@ -36,6 +36,6 @@ public class Database
             databaseFile = new DatabaseFile(new String[]{"collum1,collum2", "row1col1, row1col2"});
         }
         this.path = path;
-        this.path = file.getAbsolutePath();
+        //this.path = file.getAbsolutePath();
     }
 }

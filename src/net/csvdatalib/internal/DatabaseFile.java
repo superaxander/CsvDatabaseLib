@@ -445,7 +445,7 @@ public class DatabaseFile{
     public void setIntegerArray(int[] value, String collum) throws DatabaseException{
         this.setIntegerArray(value, collum, this.rows.length);
     }
-    
+
     /**
      * Gets the rows and collums and turns them into lines(for writing to a file)
      * @return the rows and collums in a string array.
