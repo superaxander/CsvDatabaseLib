@@ -13,17 +13,15 @@ import java.io.*;
 public class FileOperationHelper
 {
     /**
-     * Get a file and check permissions.(Optionally check if the file exists)
+     * Get a file and check if the file can be written to and can be read.(Optionally check if the file exists)
      * @param path the path of the specified file
      * @param mustexist if true will check if the file exists before it is returned
-     * @param requiredpermissions the permissions the application needs to work with the file
      * @return the generated File object
      * @throws DatabaseIOException throws exception when file IO failed
      */
-    public static File getFile(String path, Boolean mustexist, EnumFilePermissions requiredpermissions) throws DatabaseIOException{
+    public static File getFile(String path, Boolean mustexist) throws DatabaseIOException{
         File file = new File(path);
-        Boolean permissionscorrect = false;
-        permissionscorrect = requiredpermissions.checkFilePermissions(file);
+        Boolean permissionscorrect = file.canRead() && file.canWrite();
         if((!mustexist || file.exists()) && file.isDirectory()){
             if(permissionscorrect){
                 return file;
@@ -52,7 +50,7 @@ public class FileOperationHelper
             fileWriter.flush();
             fileWriter.close();
         }catch (IOException e){
-            throw new DatabaseIOException("FileIOFailed");
+            throw new DatabaseIOException("File IO Failed");
         }
     }
 

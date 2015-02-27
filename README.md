@@ -1,5 +1,6 @@
 # CsvDatabaseLib
-A simple library for reading csvdatabases in Java
+A simple library for reading csv databases in Java.
+Currently a work in progress.
 
 Features:
 - Simple and easy to convert csv text files

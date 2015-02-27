@@ -29,7 +29,7 @@ public class Database
      * @throws DatabaseException throws exception when anything goes wrong
      */
     public Database(String path) throws DatabaseException{
-        FileOperationHelper.getFile(path, false, EnumFilePermissions.READ_WRITE);
+        FileOperationHelper.getFile(path, false);
         if(file.exists()){
             databaseFile = new DatabaseFile(FileOperationHelper.loadFile(file));
         }else{
